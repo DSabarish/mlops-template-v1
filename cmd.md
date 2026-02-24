@@ -43,6 +43,8 @@ cat $env:APPDATA\gcloud\application_default_credentials.json
 gcloud services enable artifactregistry.googleapis.com --project $PROJECT_ID
 gcloud services enable bigquery.googleapis.com --project $PROJECT_ID 
 gcloud services enable iam.googleapis.com --project $PROJECT_ID
+gcloud services enable run.googleapis.com artifactregistry.googleapis.com bigquery.googleapis.com --quiet
+
 
 # -------------------------------
 # ✅ STEP 4 — Prepare Terraform

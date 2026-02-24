@@ -63,15 +63,6 @@ jobs:
 
       - uses: google-github-actions/setup-gcloud@v2
 
-      - name: Enable required APIs
-        run: |
-          gcloud services enable \
-            run.googleapis.com \
-            artifactregistry.googleapis.com \
-            bigquery.googleapis.com \
-            --project="${{ secrets.GCP_PROJECT }}" \
-            --quiet
-
       - name: Docker auth
         run: gcloud auth configure-docker asia-south1-docker.pkg.dev --quiet
 
