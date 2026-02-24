@@ -3,8 +3,13 @@ ML pipeline config. Values come from Terraform outputs (env in CI/CD).
 """
 import os
 
-# GCP (from Terraform outputs)
-PROJECT_ID = os.environ.get("GCP_PROJECT", "sabs-20")
+# GCP (from Terraform outputs or auth; fallback for CI when GCP_PROJECT secret not set)
+PROJECT_ID = (
+    os.environ.get("GCP_PROJECT")
+    or os.environ.get("GOOGLE_CLOUD_PROJECT")
+    or os.environ.get("CLOUDSDK_CORE_PROJECT")
+    or "sabs-20"
+)
 REGION = os.environ.get("GCP_REGION", "asia-south1")
 
 # Buckets (Terraform: data_bucket, artifacts_bucket)

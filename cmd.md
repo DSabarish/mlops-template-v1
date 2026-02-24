@@ -5,7 +5,7 @@
 # -------------------------------
 # 🔹 PROJECT VARIABLE
 # -------------------------------
-$PROJECT_ID = "dn-project-template-488407"
+$PROJECT_ID = "sabs-1000"
 echo $PROJECT_ID
 
 # -------------------------------
@@ -41,8 +41,7 @@ cat $env:APPDATA\gcloud\application_default_credentials.json
 # ✅ STEP 3 — Enable Required APIs
 # -------------------------------_
 gcloud services enable artifactregistry.googleapis.com --project $PROJECT_ID
-gcloud services enable bigquery.googleapis.com --project $PROJECT_ID
-gcloud services enable bigquery.googleapis.com --project $PROJECT_ID
+gcloud services enable bigquery.googleapis.com --project $PROJECT_ID 
 gcloud services enable iam.googleapis.com --project $PROJECT_ID
 
 # -------------------------------
@@ -89,3 +88,11 @@ dataset_id = "training_dataset_dev"
 project_id = "dn-project-template-488407"
 runtime_service_account = "sabs-dev-runtime@dn-project-template-488407.iam.gserviceaccount.com"
 table_id = "features_table"
+
+artifact_repo_url = "asia-south1-docker.pkg.dev/sabs-1000/mlapp-dev-repo"
+artifacts_bucket = "mlapp-dev-artifacts-sabs-1000"
+cicd_service_account = "mlapp-dev-cicd@sabs-1000.iam.gserviceaccount.com"
+data_bucket = "mlapp-dev-data-sabs-1000"
+dataset_id = "training_dataset_dev"
+runtime_service_account = "mlapp-dev-runtime@sabs-1000.iam.gserviceaccount.com"
+PS C:\Users\Selvam Sabarish\Desktop\sabs\my_work_on_cnp_projects\DN_Terraform\InfraBuild3\terraform> 

@@ -19,10 +19,9 @@ artifacts_retention_days = 90
 data_retention_days      = 30
 
 table_schema = [
-  { name = "f1", type = "FLOAT", mode = "NULLABLE" },
-  { name = "f2", type = "FLOAT", mode = "NULLABLE" },
-  { name = "f3", type = "FLOAT", mode = "NULLABLE" },
-  { name = "f4", type = "FLOAT", mode = "NULLABLE" },
-  { name = "f5", type = "FLOAT", mode = "NULLABLE" },
-  { name = "T", type = "FLOAT", mode = "NULLABLE" }
+  { name = "feature_1", type = "FLOAT", mode = "NULLABLE" },
+  { name = "feature_2", type = "FLOAT", mode = "NULLABLE" },
+  { name = "feature_3", type = "FLOAT", mode = "NULLABLE" },
+  { name = "feature_4", type = "FLOAT", mode = "NULLABLE" },
+  { name = "feature_5", type = "FLOAT", mode = "NULLABLE" }
 ]

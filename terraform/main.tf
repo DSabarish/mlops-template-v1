@@ -280,11 +280,3 @@ output "runtime_service_account" {
   value = google_service_account.runtime.email
 }
 
-output "table_id" {
-  value = google_bigquery_table.table.table_id
-}
-
-output "project_id" {
-  value = var.project_id
-}
-
