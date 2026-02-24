@@ -2,6 +2,8 @@
 terraform/.terraform/
 terraform/.terraform.lock.hcl
 terraform/*.tfplan
+terraform/tfplan
+terraform/tfplan-*
 terraform/*.tfstate
 terraform/*.tfstate.*
 terraform/tf_outputs.json

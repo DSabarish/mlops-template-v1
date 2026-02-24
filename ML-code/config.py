@@ -19,11 +19,8 @@ TABLE_ID = os.environ.get("TABLE_ID", "features_table")
 FEATURE_COLUMNS = ["f1", "f2", "f3", "f4", "f5"]
 TARGET_COLUMN = "T"
 
-# GCS paths (versioned)
+# GCS paths (versioned) — models saved to GCS only
 DATA_GCS_PREFIX = "data"
 MODELS_GCS_PREFIX = "models"
 MODEL_FILENAME = "model.joblib"
 LATEST_SUBFOLDER = "latest"
-
-# Local paths
-MODEL_DIR = "models"

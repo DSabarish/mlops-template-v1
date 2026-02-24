@@ -5,7 +5,7 @@
 # -------------------------------
 # 🔹 PROJECT VARIABLE
 # -------------------------------
-$PROJECT_ID = "sabs-20"
+$PROJECT_ID = "dn-project-template"
 echo $PROJECT_ID
 
 # -------------------------------
@@ -39,7 +39,7 @@ cat $env:APPDATA\gcloud\application_default_credentials.json
 
 # -------------------------------
 # ✅ STEP 3 — Enable Required APIs
-# -------------------------------
+# -------------------------------_
 gcloud services enable artifactregistry.googleapis.com --project $PROJECT_ID
 gcloud services enable bigquery.googleapis.com --project $PROJECT_ID
 gcloud services enable bigquery.googleapis.com --project $PROJECT_ID
@@ -81,3 +81,11 @@ terraform apply -var-file="dev.tfvars"
 ############################################
 
 
+artifact_repo_url = "asia-south1-docker.pkg.dev/dn-project-template/sabs-dev-repo"
+artifacts_bucket = "sabs-dev-artifacts-dn-project-template"
+cicd_service_account = "sabs-dev-cicd@dn-project-template.iam.gserviceaccount.com"
+data_bucket = "sabs-dev-data-dn-project-template"
+dataset_id = "training_dataset_dev"
+project_id = "dn-project-template"
+runtime_service_account = "sabs-dev-runtime@dn-project-template.iam.gserviceaccount.com"
+table_id = "features_table"

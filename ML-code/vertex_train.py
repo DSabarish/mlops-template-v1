@@ -30,7 +30,7 @@ def main():
     from train import train_and_save_to_gcs
     df = clean(df)
     X, y = transform(df)
-    _, _, latest_uri, version_uri, metrics = train_and_save_to_gcs(X, y)
+    _, latest_uri, version_uri, metrics = train_and_save_to_gcs(X, y)
     print("Latest:", latest_uri)
     print("Versioned:", version_uri)
     print("Metrics:", metrics)

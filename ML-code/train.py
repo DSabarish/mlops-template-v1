@@ -1,8 +1,9 @@
 """
-Train model and save to GCS: latest/ plus versioned folder (old models kept).
+Train model and save to GCS only: latest/ plus versioned folder (old models kept).
+No local model files.
 """
-import os
 import joblib
+from io import BytesIO
 from datetime import datetime
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
@@ -23,36 +24,30 @@ def train(X, y):
     return model, {"mse": mean_squared_error(y, pred), "r2": r2_score(y, pred)}
 
 
-def save_local(model, path: str = None) -> str:
-    """Save model as joblib locally."""
-    path = path or os.path.join(os.path.dirname(__file__), "models", MODEL_FILENAME)
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    joblib.dump(model, path)
-    return path
-
-
-def upload_to_gcs(local_path: str, gcs_prefix: str, subfolder: str) -> str:
-    """Upload local file to GCS at prefix/subfolder/MODEL_FILENAME. Returns gs:// URI."""
+def _upload_model_bytes_to_gcs(model_bytes: bytes, gcs_prefix: str, subfolder: str) -> str:
+    """Upload model bytes to GCS at prefix/subfolder/MODEL_FILENAME. Returns gs:// URI."""
     from google.cloud import storage
     client = storage.Client(project=PROJECT_ID)
     bucket = client.bucket(ARTIFACTS_BUCKET)
-    blob_path = f"{gcs_prefix}/{subfolder}/{os.path.basename(local_path)}"
+    blob_path = f"{gcs_prefix}/{subfolder}/{MODEL_FILENAME}"
     blob = bucket.blob(blob_path)
-    blob.upload_from_filename(local_path, content_type="application/octet-stream")
+    blob.upload_from_string(model_bytes, content_type="application/octet-stream")
     return f"gs://{ARTIFACTS_BUCKET}/{blob_path}"
 
 
 def train_and_save_to_gcs(X, y) -> tuple:
     """
-    Train, save locally, upload to GCS at models/latest/ and models/v_<timestamp>/.
-    Returns (model, local_path, latest_uri, version_uri, metrics).
+    Train and save to GCS only (models/latest/ and models/v_<timestamp>/).
+    Returns (model, latest_uri, version_uri, metrics).
     """
     model, metrics = train(X, y)
-    local_path = save_local(model)
+    buf = BytesIO()
+    joblib.dump(model, buf)
+    model_bytes = buf.getvalue()
     version = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
-    latest_uri = upload_to_gcs(local_path, MODELS_GCS_PREFIX, LATEST_SUBFOLDER)
-    version_uri = upload_to_gcs(local_path, MODELS_GCS_PREFIX, f"v_{version}")
-    return model, local_path, latest_uri, version_uri, metrics
+    latest_uri = _upload_model_bytes_to_gcs(model_bytes, MODELS_GCS_PREFIX, LATEST_SUBFOLDER)
+    version_uri = _upload_model_bytes_to_gcs(model_bytes, MODELS_GCS_PREFIX, f"v_{version}")
+    return model, latest_uri, version_uri, metrics
 
 
 if __name__ == "__main__":
@@ -61,7 +56,7 @@ if __name__ == "__main__":
     from gcs_ingestion import query_bq
     df = clean(query_bq())
     X, y = transform(df)
-    _, _, latest_uri, version_uri, metrics = train_and_save_to_gcs(X, y)
+    _, latest_uri, version_uri, metrics = train_and_save_to_gcs(X, y)
     print("Latest:", latest_uri)
     print("Versioned:", version_uri)
     print("Metrics:", metrics)
