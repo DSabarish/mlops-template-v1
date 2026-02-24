@@ -10,6 +10,7 @@ env:
 
 jobs:
   pipeline:
+    needs: [test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -50,7 +51,7 @@ jobs:
       - run: python -m pytest tests/ -v
 
   deploy:
-    needs: [pipeline, test]
+    needs: [pipeline]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
