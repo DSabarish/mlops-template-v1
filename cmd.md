@@ -43,8 +43,30 @@ cat $env:APPDATA\gcloud\application_default_credentials.json
 gcloud services enable artifactregistry.googleapis.com --project $PROJECT_ID
 gcloud services enable bigquery.googleapis.com --project $PROJECT_ID 
 gcloud services enable iam.googleapis.com --project $PROJECT_ID
-gcloud services enable run.googleapis.com artifactregistry.googleapis.com bigquery.googleapis.com --quiet
+gcloud services enable run.googleapis.com artifactregistry.googleapis.com bigquery.googleapis.com iam.serviceaccounts.actAs --quiet
 
+gcloud services enable `
+  run.googleapis.com `
+  artifactregistry.googleapis.com `
+  bigquery.googleapis.com `
+  iam.serviceaccounts.actAs `
+  --quiet
+
+gcloud services enable `
+  run.googleapis.com `
+  artifactregistry.googleapis.com `
+  bigquery.googleapis.com `
+  --quiet
+
+gcloud projects add-iam-policy-binding sabs-1000 `
+  --member="user:sabsdrive05@gmail.com" `
+  --role="roles/iam.serviceAccountUser"
+
+
+gcloud iam service-accounts add-iam-policy-binding `
+  mlapp-dev-runtime@sabs-1000.iam.gserviceaccount.com `
+  --member="serviceAccount:mlapp-dev-cicd@sabs-1000.iam.gserviceaccount.com" `
+  --role="roles/iam.serviceAccountUser"
 
 # -------------------------------
 # ✅ STEP 4 — Prepare Terraform

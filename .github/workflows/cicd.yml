@@ -82,6 +82,7 @@ jobs:
             --region "asia-south1" \
             --platform managed \
             --allow-unauthenticated \
+            --service-account "mlapp-dev-runtime@sabs-1000.iam.gserviceaccount.com" \
             --set-env-vars "GCP_PROJECT=${{ secrets.GCP_PROJECT }},ARTIFACTS_BUCKET=${{ secrets.ARTIFACTS_BUCKET }}"
         env:
           CLOUDSDK_CORE_PROJECT: ${{ secrets.GCP_PROJECT }}
