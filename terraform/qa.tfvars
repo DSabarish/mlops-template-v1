@@ -8,6 +8,7 @@ labels = {
   environment = "qa"
 }
 
+
 dataset_id       = "training_dataset_qa"
 table_id         = "features_table"
 dataset_location = "asia-south1"
