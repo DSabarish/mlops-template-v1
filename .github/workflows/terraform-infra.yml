@@ -34,8 +34,11 @@ jobs:
         run: |
           if [ -n "${{ secrets.TF_STATE_BUCKET }}" ]; then
             printf 'terraform {\n  backend "gcs" {\n    bucket = "%s"\n    prefix = "dev"\n  }\n}\n' "${{ secrets.TF_STATE_BUCKET }}" > backend.tf
+            terraform init -input=false
+          else
+            rm -f backend.tf
+            terraform init -input=false
           fi
-          terraform init -input=false
 
       - name: Terraform validate
         run: terraform validate

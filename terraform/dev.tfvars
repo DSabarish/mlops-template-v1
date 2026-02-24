@@ -1,8 +1,7 @@
 # terraform\dev.tfvars
-#v1
 
 # -------------------------------------------------------
-project_id  = "dn-project-template" 
+project_id  = "dn-project-template"
 region      = "asia-south1"
 environment = "dev"
 prefix      = "sabs"
@@ -11,7 +10,6 @@ labels = {
   owner       = "dn-team"
   environment = "dev"
 }
-
 
 # -------------------------------------------------------
 dataset_id       = "training_dataset_dev"
