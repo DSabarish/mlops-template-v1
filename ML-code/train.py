@@ -7,13 +7,14 @@ from io import BytesIO
 from datetime import datetime
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
-from config import (
-    ARTIFACTS_BUCKET,
-    MODELS_GCS_PREFIX,
-    MODEL_FILENAME,
-    LATEST_SUBFOLDER,
-    PROJECT_ID,
-)
+from config_loader import load_config
+
+_cfg = load_config()
+PROJECT_ID = _cfg["project_id"]
+ARTIFACTS_BUCKET = _cfg["artifacts_bucket"]
+MODELS_GCS_PREFIX = _cfg["models_gcs_prefix"]
+MODEL_FILENAME = _cfg["model_filename"]
+LATEST_SUBFOLDER = _cfg["latest_subfolder"]
 
 
 def train(X, y):

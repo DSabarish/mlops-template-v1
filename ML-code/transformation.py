@@ -2,7 +2,11 @@
 Standard transformation: produce feature matrix X and target y for training.
 """
 import pandas as pd
-from config import FEATURE_COLUMNS, TARGET_COLUMN
+from config_loader import load_config
+
+_cfg = load_config()
+FEATURE_COLUMNS = _cfg["feature_columns"]
+TARGET_COLUMN = _cfg["target_column"]
 
 
 def transform(df: pd.DataFrame):

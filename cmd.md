@@ -80,15 +80,6 @@ terraform apply -var-file="dev.tfvars"
 ############################################
 
 
-artifact_repo_url = "asia-south1-docker.pkg.dev/dn-project-template-488407/sabs-dev-repo"
-artifacts_bucket = "sabs-dev-artifacts-dn-project-template-488407"
-cicd_service_account = "sabs-dev-cicd@dn-project-template-488407.iam.gserviceaccount.com"
-data_bucket = "sabs-dev-data-dn-project-template-488407"
-dataset_id = "training_dataset_dev"
-project_id = "dn-project-template-488407"
-runtime_service_account = "sabs-dev-runtime@dn-project-template-488407.iam.gserviceaccount.com"
-table_id = "features_table"
-
 artifact_repo_url = "asia-south1-docker.pkg.dev/sabs-1000/mlapp-dev-repo"
 artifacts_bucket = "mlapp-dev-artifacts-sabs-1000"
 cicd_service_account = "mlapp-dev-cicd@sabs-1000.iam.gserviceaccount.com"

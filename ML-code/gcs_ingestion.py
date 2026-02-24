@@ -3,7 +3,14 @@ Get data from BigQuery (query) and save to GCS bucket (infra), versioned.
 """
 import os
 from datetime import datetime
-from config import PROJECT_ID, DATASET_ID, TABLE_ID, DATA_BUCKET, DATA_GCS_PREFIX
+from config_loader import load_config
+
+_cfg = load_config()
+PROJECT_ID = _cfg["project_id"]
+DATASET_ID = _cfg["dataset_id"]
+TABLE_ID = _cfg["table_id"]
+DATA_BUCKET = _cfg["data_bucket"]
+DATA_GCS_PREFIX = _cfg["data_gcs_prefix"]
 
 
 def query_bq(query: str = None):

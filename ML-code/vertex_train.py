@@ -5,13 +5,19 @@ Expects env: GCP_PROJECT, ARTIFACTS_BUCKET, DATA_BUCKET, DATASET_ID, TABLE_ID (o
 """
 import os
 import argparse
+from config_loader import load_config
+
+_cfg = load_config()
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-uri", default=None, help="gs:// bucket/path to data CSV (else query BQ)")
     args = parser.parse_args()
-    from config import PROJECT_ID, ARTIFACTS_BUCKET, DATASET_ID, TABLE_ID
+    PROJECT_ID = _cfg["project_id"]
+    ARTIFACTS_BUCKET = _cfg["artifacts_bucket"]
+    DATASET_ID = _cfg["dataset_id"]
+    TABLE_ID = _cfg["table_id"]
     if args.data_uri:
         import pandas as pd
         from google.cloud import storage

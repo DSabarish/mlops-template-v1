@@ -4,7 +4,11 @@ Generate data: 100 records, 5 feature columns, 1 target.
 import os
 import pandas as pd
 import numpy as np
-from config import FEATURE_COLUMNS, TARGET_COLUMN
+from config_loader import load_config
+
+_cfg = load_config()
+FEATURE_COLUMNS = _cfg["feature_columns"]
+TARGET_COLUMN = _cfg["target_column"]
 
 
 def generate_data(n_records: int = 100, seed: int = 42) -> pd.DataFrame:

@@ -5,7 +5,15 @@ import os
 import joblib
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from config import FEATURE_COLUMNS, ARTIFACTS_BUCKET, MODELS_GCS_PREFIX, LATEST_SUBFOLDER, MODEL_FILENAME, PROJECT_ID
+from config_loader import load_config
+
+_cfg = load_config()
+PROJECT_ID = _cfg["project_id"]
+FEATURE_COLUMNS = _cfg["feature_columns"]
+ARTIFACTS_BUCKET = _cfg["artifacts_bucket"]
+MODELS_GCS_PREFIX = _cfg["models_gcs_prefix"]
+LATEST_SUBFOLDER = _cfg["latest_subfolder"]
+MODEL_FILENAME = _cfg["model_filename"]
 
 app = FastAPI(title="ML Inference API")
 _model = None
