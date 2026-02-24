@@ -33,6 +33,7 @@ jobs:
           echo "table_id=${{ secrets.TABLE_ID }}" >> $GITHUB_OUTPUT
           echo "artifact_repo_url=asia-south1-docker.pkg.dev/${{ secrets.GCP_PROJECT }}/mlapp-dev-repo" >> $GITHUB_OUTPUT
 
+          
   pipeline:
     needs: infra-env
     runs-on: ubuntu-latest
