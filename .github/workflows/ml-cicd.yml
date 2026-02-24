@@ -80,10 +80,13 @@ jobs:
           credentials_json: ${{ secrets.GCP_SA_KEY }}
       - uses: google-github-actions/setup-gcloud@v2
       - name: Docker auth
-        run: gcloud auth configure-docker ${{ needs.infra-env.outputs.artifact_repo_url }} --quiet
+        run: gcloud auth configure-docker asia-south1-docker.pkg.dev --quiet
+
       - name: Build and push
         run: |
-          IMG="${{ needs.infra-env.outputs.artifact_repo_url }}/app:${{ github.sha }}"
+          REPO="asia-south1-docker.pkg.dev/${{ needs.infra-env.outputs.project_id }}/mlapp-dev-repo"
+          IMG="$REPO/app:${{ github.sha }}"
+          echo "Building $IMG"
           docker build -t "$IMG" .
           docker push "$IMG"
           echo "IMAGE=$IMG" >> $GITHUB_ENV
