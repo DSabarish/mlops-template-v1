@@ -62,7 +62,6 @@ gcloud projects add-iam-policy-binding sabs-1000 `
   --member="user:sabsdrive05@gmail.com" `
   --role="roles/iam.serviceAccountUser"
 
-
 gcloud iam service-accounts add-iam-policy-binding `
   mlapp-dev-runtime@sabs-1000.iam.gserviceaccount.com `
   --member="serviceAccount:mlapp-dev-cicd@sabs-1000.iam.gserviceaccount.com" `

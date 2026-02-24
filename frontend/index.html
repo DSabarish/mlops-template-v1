@@ -29,7 +29,8 @@
   <script>
     const API_URL = (function(){
       const base = document.querySelector('meta[name="api-base"]');
-      return (base && base.getAttribute('content')) || '/api';
+      const content = base && base.getAttribute('content');
+      return (content !== null && content !== '') ? content : '';
     })();
     document.getElementById('form').onsubmit = async function(e) {
       e.preventDefault();
