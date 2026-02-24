@@ -1,14 +1,9 @@
 # Terraform Infra: provision GCP infra (f1..f5,T schema, buckets, BQ, Artifact Registry, SAs).
-# Trigger: push to infra paths or branch. Uses remote state in GCS when TF_STATE_BUCKET is set.
+# Trigger: manual only. Actions → Terraform Infra → Run workflow.
 
 name: Terraform Infra
 
 on:
-  push:
-    branches: [main, dev]
-    paths:
-      - 'terraform/**'
-      - '.github/workflows/terraform-infra.yml'
   workflow_dispatch:
 
 env:
