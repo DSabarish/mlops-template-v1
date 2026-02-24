@@ -87,7 +87,7 @@ In your repo:
 - **`WIF_PROVIDER`** = the full provider path, e.g.  
   `projects/123456789012/locations/global/workloadIdentityPools/github-pool/providers/github`
 - **`WIF_SERVICE_ACCOUNT`** = the Terraform SA email, e.g.  
-  `terraform-ci@dn-project-template.iam.gserviceaccount.com`
+  `terraform-ci@dn-project-template-488407.iam.gserviceaccount.com`
 - **`TF_STATE_BUCKET`** (optional but recommended) = your GCS bucket for Terraform state
 
 No `GCP_SA_KEY` secret is needed.

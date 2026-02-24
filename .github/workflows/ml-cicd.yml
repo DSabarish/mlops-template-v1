@@ -1,5 +1,5 @@
 # ML Pipeline & Deploy: runs on every push to dev.
-# Jobs: infra-env → pipeline + test (parallel) → deploy.
+# Auth: service account JSON only. Add secret GCP_SA_KEY = full contents of the .json key file.
 
 name: ML Pipeline & Deploy (CI/CD)
 

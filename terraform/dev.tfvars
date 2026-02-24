@@ -1,7 +1,7 @@
 # terraform\dev.tfvars
 
 # -------------------------------------------------------
-project_id  = "dn-project-template"
+project_id  = "dn-project-template-488407"
 region      = "asia-south1"
 environment = "dev"
 prefix      = "sabs"
