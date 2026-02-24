@@ -1,8 +1,12 @@
 """Test clean drops nulls and keeps schema."""
 import pandas as pd
 import pytest
-from config import FEATURE_COLUMNS, TARGET_COLUMN
+from config_loader import load_config
 from clean import clean
+
+_cfg = load_config()
+FEATURE_COLUMNS = _cfg["feature_columns"]
+TARGET_COLUMN = _cfg["target_column"]
 
 
 def test_clean_drops_nulls():
