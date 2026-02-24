@@ -1,0 +1,115 @@
+# CI: pipeline (generate -> BQ -> GCS -> clean -> transform -> train), pytest, deploy app to Cloud Run.
+# Heavy lifting can be moved to Vertex AI custom job (see vertex_train.py).
+
+name: ML Pipeline & Deploy (CI/CD)
+
+on:
+  push:
+    branches: [main, dev]
+    paths:
+      - 'ML-code/**'
+      - 'frontend/**'
+      - 'tests/**'
+      - '.github/workflows/ml-cicd.yml'
+      - 'Dockerfile'
+  workflow_dispatch:
+
+jobs:
+  tf-outputs:
+    runs-on: ubuntu-latest
+    outputs:
+      project_id: ${{ steps.out.outputs.project_id }}
+      region: ${{ steps.out.outputs.region }}
+      data_bucket: ${{ steps.out.outputs.data_bucket }}
+      artifacts_bucket: ${{ steps.out.outputs.artifacts_bucket }}
+      dataset_id: ${{ steps.out.outputs.dataset_id }}
+      table_id: ${{ steps.out.outputs.table_id }}
+      artifact_repo_url: ${{ steps.out.outputs.artifact_repo_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: out
+        run: |
+          cd terraform
+          if [ -n "${{ secrets.TF_STATE_BUCKET }}" ]; then
+            printf 'terraform {\n  backend "gcs" {\n    bucket = "%s"\n    prefix = "dev"\n  }\n}\n' "${{ secrets.TF_STATE_BUCKET }}" > backend.tf
+            terraform init -input=false
+            terraform output -json > ../tf_outputs.json
+          fi
+          cd ..
+          if [ -f tf_outputs.json ]; then
+            echo "project_id=$(jq -r '.project_id.value' tf_outputs.json)" >> $GITHUB_OUTPUT
+            echo "region=asia-south1" >> $GITHUB_OUTPUT
+            echo "data_bucket=$(jq -r '.data_bucket.value' tf_outputs.json)" >> $GITHUB_OUTPUT
+            echo "artifacts_bucket=$(jq -r '.artifacts_bucket.value' tf_outputs.json)" >> $GITHUB_OUTPUT
+            echo "dataset_id=$(jq -r '.dataset_id.value' tf_outputs.json)" >> $GITHUB_OUTPUT
+            echo "table_id=$(jq -r '.table_id.value' tf_outputs.json)" >> $GITHUB_OUTPUT
+            echo "artifact_repo_url=$(jq -r '.artifact_repo_url.value' tf_outputs.json)" >> $GITHUB_OUTPUT
+          else
+            echo "project_id=${{ secrets.GCP_PROJECT }}" >> $GITHUB_OUTPUT
+            echo "region=asia-south1" >> $GITHUB_OUTPUT
+            echo "data_bucket=${{ secrets.DATA_BUCKET }}" >> $GITHUB_OUTPUT
+            echo "artifacts_bucket=${{ secrets.ARTIFACTS_BUCKET }}" >> $GITHUB_OUTPUT
+            echo "dataset_id=${{ secrets.DATASET_ID }}" >> $GITHUB_OUTPUT
+            echo "table_id=${{ secrets.TABLE_ID }}" >> $GITHUB_OUTPUT
+            echo "artifact_repo_url=${{ secrets.ARTIFACT_REPO_URL }}" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+
+  pipeline:
+    needs: tf-outputs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r ML-code/requirements.txt
+      - name: Run pipeline (generate -> BQ -> GCS -> clean -> transform -> train)
+        run: python ML-code/run_pipeline.py
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GCP_SA_KEY }}
+          GCP_PROJECT: ${{ needs.tf-outputs.outputs.project_id }}
+          DATA_BUCKET: ${{ needs.tf-outputs.outputs.data_bucket }}
+          ARTIFACTS_BUCKET: ${{ needs.tf-outputs.outputs.artifacts_bucket }}
+          DATASET_ID: ${{ needs.tf-outputs.outputs.dataset_id }}
+          TABLE_ID: ${{ needs.tf-outputs.outputs.table_id }}
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r ML-code/requirements.txt
+      - name: Pytest (2 test cases)
+        run: python -m pytest tests/ -v
+
+  deploy:
+    needs: [tf-outputs, pipeline, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - uses: google-github-actions/setup-gcloud@v2
+      - name: Configure Docker for Artifact Registry
+        run: gcloud auth configure-docker ${{ needs.tf-outputs.outputs.artifact_repo_url }} --quiet
+      - name: Build and push
+        run: |
+          IMG="${{ needs.tf-outputs.outputs.artifact_repo_url }}/app:${{ github.sha }}"
+          docker build -t "$IMG" .
+          docker push "$IMG"
+          echo "IMAGE=$IMG" >> $GITHUB_ENV
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy app \
+            --image "${{ env.IMAGE }}" \
+            --region "${{ needs.tf-outputs.outputs.region }}" \
+            --platform managed \
+            --allow-unauthenticated \
+            --set-env-vars "GCP_PROJECT=${{ needs.tf-outputs.outputs.project_id }},ARTIFACTS_BUCKET=${{ needs.tf-outputs.outputs.artifacts_bucket }}"
+        env:
+          CLOUDSDK_CORE_PROJECT: ${{ needs.tf-outputs.outputs.project_id }}

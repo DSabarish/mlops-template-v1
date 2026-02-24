@@ -1,0 +1,21 @@
+# Terraform
+terraform/.terraform/
+terraform/.terraform.lock.hcl
+terraform/*.tfplan
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/tf_outputs.json
+tf_outputs.json
+
+# ML
+ML-code/models/
+ML-code/__pycache__/
+ML-code/*.pyc
+*.joblib
+
+# Env / IDE
+.venv/
+venv/
+.env
+.idea/
+.vscode/

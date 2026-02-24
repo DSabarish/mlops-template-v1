@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML Prediction</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 420px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 1.25rem; }
+    label { display: block; margin-top: 0.5rem; }
+    input { width: 100%; box-sizing: border-box; padding: 0.4rem; margin-top: 0.2rem; }
+    button { margin-top: 1rem; padding: 0.5rem 1rem; cursor: pointer; }
+    .result { margin-top: 1rem; padding: 0.75rem; background: #f0f0f0; border-radius: 4px; }
+    .error { background: #fee; color: #c00; }
+  </style>
+</head>
+<body>
+  <h1>Prediction</h1>
+  <p>Enter 5 features (f1–f5). One request runs prediction via the API.</p>
+  <form id="form">
+    <label>f1 <input type="number" step="any" name="f1" value="1" required></label>
+    <label>f2 <input type="number" step="any" name="f2" value="2" required></label>
+    <label>f3 <input type="number" step="any" name="f3" value="3" required></label>
+    <label>f4 <input type="number" step="any" name="f4" value="4" required></label>
+    <label>f5 <input type="number" step="any" name="f5" value="5" required></label>
+    <button type="submit">Predict</button>
+  </form>
+  <div id="result" class="result" style="display:none;"></div>
+  <script>
+    const API_URL = (function(){
+      const base = document.querySelector('meta[name="api-base"]');
+      return (base && base.getAttribute('content')) || '/api';
+    })();
+    document.getElementById('form').onsubmit = async function(e) {
+      e.preventDefault();
+      const fd = new FormData(this);
+      const body = {
+        f1: parseFloat(fd.get('f1')),
+        f2: parseFloat(fd.get('f2')),
+        f3: parseFloat(fd.get('f3')),
+        f4: parseFloat(fd.get('f4')),
+        f5: parseFloat(fd.get('f5'))
+      };
+      const el = document.getElementById('result');
+      el.style.display = 'block';
+      el.classList.remove('error');
+      el.textContent = 'Loading...';
+      try {
+        const r = await fetch((API_URL || '') + '/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data.detail || data.message || 'Request failed');
+        el.textContent = 'Prediction: ' + data.prediction;
+      } catch (err) {
+        el.classList.add('error');
+        el.textContent = 'Error: ' + err.message;
+      }
+    };
+  </script>
+  <meta name="api-base" content="">
+</body>
+</html>
