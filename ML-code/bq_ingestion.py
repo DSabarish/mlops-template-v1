@@ -11,12 +11,25 @@ TABLE_ID = _cfg["table_id"]
 
 
 def save_to_bq(df: pd.DataFrame) -> str:
-    """Load DataFrame into BigQuery table. Returns table ref."""
+    """Load DataFrame into BigQuery table. Returns table ref.
+
+    Uses schema_update_options to allow adding new nullable columns on the fly,
+    so the DataFrame schema (f1..f5, T) can extend the existing table schema.
+    """
     from google.cloud import bigquery
 
     client = bigquery.Client(project=PROJECT_ID)
     table_ref = f"{PROJECT_ID}.{DATASET_ID}.{TABLE_ID}"
-    job = client.load_table_from_dataframe(df, table_ref)
+
+    job_config = bigquery.LoadJobConfig(
+        write_disposition=bigquery.WriteDisposition.WRITE_APPEND,
+        schema_update_options=[
+            bigquery.SchemaUpdateOption.ALLOW_FIELD_ADDITION,
+            bigquery.SchemaUpdateOption.ALLOW_FIELD_RELAXATION,
+        ],
+    )
+
+    job = client.load_table_from_dataframe(df, table_ref, job_config=job_config)
     job.result()
     return table_ref
 
